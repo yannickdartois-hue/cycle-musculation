@@ -1,0 +1,131 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#4d7c0f">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Muscu">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" href="icon-32.png">
+<title>Cycle musculation</title>
+<!-- Page FABRIQUÉE par mon-eps/atelier/ecran-de-cours/construire.py : ne pas la modifier à la main ici.
+     Moteur commun : ecran.js et ecran.css. Propre à l'activité : le <style> et le <script> ci-dessous. -->
+<link rel="stylesheet" href="ecran.css">
+<style>
+/* ===== Propre au cycle musculation : couleurs, niveaux, schémas ===== */
+:root{--sol:#F1F3EE; --craie:#FFFFFF; --encre:#172033; --repere:#5A6475; --trait:#D7DCD2;
+  --ligne:#4D7C0F; --ligne-fonce:#2F4C09; --ligne-pale:#EEF5E3;
+  --vert:#1D6B3A; --vert-pale:#E6F3EA; --alerte:#B42318; --alerte-pale:#FDE8E6;
+  --facile:#2F6FB0; --facile-pale:#EAF2FB; --dur:#B4441C; --dur-pale:#FCEDE6;
+  --d:"Archivo","Arial Narrow",Arial,sans-serif; --t:"Atkinson","Segoe UI",Roboto,Arial,sans-serif;
+  --sur-encre:#FFFFFF; --fait:#9AA3AE;
+  --c-t:#4D7C0F; --c-t-pale:#EEF5E3; --sur-niv:#FFFFFF;}
+:root[data-theme="dark"]{
+  --sol:#11161D; --craie:#1B222C; --encre:#E9EEF3; --repere:#9AA5B3; --trait:#323C49; --sur-encre:#11161D; --fait:#5B6573;
+  --ligne:#A3D468; --ligne-fonce:#CDE8AA; --ligne-pale:#1E2A12;
+  --vert:#6FD39F; --vert-pale:#15301F; --alerte:#FF8A80; --alerte-pale:#3A1A18;
+  --facile:#7FB0E8; --facile-pale:#162638; --dur:#F29470; --dur-pale:#3A2018;
+  --c-t:#A3D468; --c-t-pale:#1E2A12; --sur-niv:#11161D; color-scheme:dark}
+.defi{margin-top:12px;padding:10px 14px;border-radius:14px;background:var(--ligne-pale);font-size:17px}
+.defi b{color:var(--ligne-fonce)}
+/* Fiches mobiles, échelle de ressentis, listes d'ateliers (schémas de muscu-donnees.js) */
+.mob{border:2px solid var(--mc);border-radius:14px;padding:10px 12px;margin:0 0 10px;background:var(--craie)}
+.mob h3{margin:0 0 6px;font:800 22px/1.1 var(--d);color:var(--mc)}
+.mob h3 small{font:700 max(14px,var(--fs-min,15px)) var(--t);color:var(--repere);margin-left:6px}
+.mob table{width:100%;border-collapse:collapse;font-size:max(15px,var(--fs-min,15px))}
+.mob th{text-align:left;vertical-align:top;padding:4px 8px 4px 0;color:var(--repere);font-weight:700;width:42%}
+.mob td{padding:4px 0;border-top:1px solid var(--trait)}
+.mob th{border-top:1px solid var(--trait)}
+.ech{display:grid;gap:4px}
+.ech div{display:flex;gap:10px;align-items:center;border-radius:10px;padding:6px 10px;color:#172033;font-size:max(15px,var(--fs-min,15px))}
+.ech div>b{font:800 24px/1 var(--d);min-width:1.4em;text-align:center}
+.ats{margin:0;padding-left:22px;font-size:max(16px,var(--fs-min,15px))}
+.ats li{margin:4px 0}.ats li span{color:var(--repere);font-size:max(15px,var(--fs-min,15px))}
+.evt{width:100%;border-collapse:collapse;font-size:max(15px,var(--fs-min,15px))}
+.evt th{text-align:left;padding:6px 8px 6px 0;vertical-align:top}.evt td{padding:6px 0;border-top:1px solid var(--trait)}.evt th{border-top:1px solid var(--trait)}
+.evt small{display:block;color:var(--repere)}
+@media print{.mob{break-inside:avoid}}
+</style>
+<style>/* Lisibilité terrain : textes à 15 px minimum à l'écran ; tailles d'origine à l'impression. */@media print{:root{--fs-min:0px}}</style>
+<link rel="stylesheet" href="eps-charte-v1.css">
+<style>/* Charte v1 : couleur de l'activité et teinte de chaque cycle (calculées par construire.py) */
+:root{--act:#4d7c0f;--act-fonce:#304d09;--act-pale:#eaefe2;--act-sombre:#9db77b;--act-pale-sombre:#22301e}
+:root{--c-t:#4d7c0f;--c-t-pale:#eaefe2}
+body.niv-t{--niv:#4d7c0f;--sur-niv:#ffffff;--niv-pale:var(--act-pale)}
+:root[data-theme="dark"] body.niv-t{--niv:#7a9d4b;--sur-niv:#0d1117}
+.cy button[data-cy=t].on{background:#4d7c0f;color:#ffffff}
+:root[data-theme="dark"] .cy button[data-cy=t].on{background:#7a9d4b;color:#0d1117}
+.pc.niv-t .sc.jour{outline-color:var(--ligne)}
+.pc.niv-t{--nivp:#4d7c0f}
+</style>
+</head>
+<body>
+<header class="barre">
+  <img src="icon-192.png" alt="">
+  <div class="app">Musculation<small>Lycée Pompidou</small></div>
+  <span class="pastille-niv" id="cyPast">Tle</span>
+  <div class="titre" id="titre"></div>
+  <a class="bt clair" href="https://yannickdartois-hue.github.io/musculation-eleves/">Appli élève</a>
+  <a class="bt clair" id="prep" href="outils.html">Préparer</a>
+  <button class="bt clair baide" type="button" onclick="EPSAide.ouvrir()" aria-label="Mode d’emploi" title="Mode d’emploi">?</button>
+</header>
+<div class="trace"></div>
+<div class="niveau" id="niveau"></div>
+<section class="deroule" id="deroule" aria-label="Déroulé de la séance"></section>
+<main class="zone" id="zone"></main>
+<footer class="pouce">
+  <button class="bt bord" id="btSeances" type="button">‹ Séances</button>
+  <button class="bt bord" id="btOutils" type="button">Outils</button>
+  <button class="bt bord" id="btAjuster" type="button">Ajuster le déroulé</button>
+  <div class="info" id="info"></div>
+</footer>
+<div id="couche"></div>
+
+<script src="muscu-donnees.js"></script>
+<script>
+'use strict';
+/* Écran de cours — musculation (CA5, Terminale) : ce qui est propre à l'activité.
+   Source : mon-eps/atelier/ecran-de-cours/apps/. Le moteur commun est ecran.js.
+   Données : muscu-donnees.js (même fichier dans l'appli élève musculation-eleves). */
+/* Un seul niveau (Terminale). Chaque séance garde son déroulé (tl) et ses fiches, comme en gymnastique. */
+const courtM=t=>String(t||'').split(/\s:\s|\s·\s/)[0];
+const convM=f=>({t:f.titre,k:f.cat,disp:f.dispo,four:f.roles,deroul:f.deroul||[],cons:f.crit?[f.crit]:[],reus:f.reussite,moins:f.moins,plus:f.plus,spec:f.schema});
+const MUSC=SEANCES.map(S=>({id:S.id.toLowerCase(),n:S.id,title:S.titre,short:courtM(S.titre),obj:S.obj,prepare:S.prepare||[],install:S.install,bilan:S.bilan,
+  tl:S.tl.map(t=>[t[0],String(t[1]),t[2]]),ex:S.fiches.map(convM),evalPage:false,status:/Évaluation AFL1/.test(S.titre)?'eval':''}));
+const APP={
+  old:'outils.html',
+  cle:'mu',
+  niv:{t:{label:'Terminale',court:'Tle',long:'TERMINALE',L:MUSC}},
+  defaut:'t',
+  lienOld:()=>APP.old,
+  lireCur(){const j=lire('muTle_jour',-1);return {t:j>=0&&MUSC[j]?MUSC[j].id:''}},
+  marquerJour(c,id){const j=MUSC.findIndex(s=>s.id===id);if(j<0)return;ecrire('muTle_jour',j);CUR.t=id},
+  outils:[{"titre":"Pendant le cours","items":[["nuage","Nuage de mots","mots des élèves, échelle commune"],["defi","Défi 10 RM","équipes : kilos + qualité"],["calculette","Calculette","charges de 30 à 80 %"]]},
+          {"titre":"Repères","items":[["mobiles","Les 3 mobiles","%, séries, rép., ressentis"],["ateliers","Ateliers","consignes, sécurité, matériel"],["securite","Sécurité","règles, angles, respiration"]]},
+          {"titre":"Préparer et évaluer","items":[["seances","Les 9 séances","détaillées, imprimables"],["evaluation","Évaluation","AFL1, AFL2, AFL3"],["sources","Sources","Laurent Lecomte, Brzycki, BO 2026"]]}],
+  urlOutil:id=>APP.old+'#tab-'+id,
+  racc:[[/mots|nuage|échelle/i,'nuage','Nuage de mots'],[/défi|10 RM|No REP/i,'defi','Défi 10 RM'],[/mobile|charge max|%/i,'mobiles','Les 3 mobiles'],[/pareur|sécurité|règles/i,'securite','Sécurité'],[/évalu|AFL/i,'evaluation','Évaluation']],
+  schemaDe:e=>{if(!e||!e.spec)return '';return schema(e.spec)},
+  plan(c,id){
+    const s=sea(c,id);if(!s)return [];
+    let fi=0;
+    return s.tl.map(t=>{const typ=t[2],dur=+t[1];
+      if(typ==='inst')return {k:'info',typ,label:t[0],court:'Install.',dur};
+      const e=s.ex[fi],lab=e?courtM(e.t):t[0];
+      return {k:'ex',typ,ref:{c,id,i:fi++},label:lab,dur}})
+     .map(x=>(x.orig=x.dur,x.st='todo',x));
+  },
+  blocInfo(b,s,i){
+    const circ=s.n==='S1'?`<h2 class="rub">Le circuit (5 min par atelier)</h2>${ateliersHTML(CIRCUIT_S1)}`:'';
+    const test=s.n==='S2'?`<h2 class="rub">Les 6 ateliers du test</h2>${ateliersHTML(ATELIERS_TEST)}`:'';
+    return `<h2 class="rub">Objectif de la séance</h2><p class="texte">${esc(s.obj)}</p>${s.install?`<h2 class="rub">Installation</h2>${orgHTML(s.install)}`:''}${circ}${test}${s.prepare.length?`<h2 class="rub">Ce que la séance prépare</h2><ul class="org">${s.prepare.map(x=>`<li>${esc(x)}</li>`).join('')}</ul>`:''}<h2 class="rub">Sécurité</h2><p class="texte">${esc(SECU.devise)}</p>`},
+  bascule:s=>''
+};
+</script>
+<script src="ecran.js"></script>
+<script src="aide-ecran.js"></script>
+<script src="eps-aide.js"></script>
+<script src="eps-maj.js"></script>
+</body>
+</html>

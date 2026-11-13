@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icon-32.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Muscu cycle">
+<meta name="theme-color" content="#4d7c0f">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cycle musculation · outils</title>
+<link rel="stylesheet" href="eps-design.css">
+<link rel="stylesheet" href="eps-outil.css">
+<style>
+:root{--bg:#f3f5f8;--surface:#fff;--ink:#1c2128;--muted:#5b6470;--line:#dde2e8;--chip:#eef1f5;--accent:#4d7c0f;--accent-soft:#eef5e3;--accent-fg:#fff;--warn:#c2410c}
+:root[data-theme="dark"]{--bg:#0d1117;--surface:#161b22;--ink:#e6edf3;--muted:#8b949e;--line:#2a313b;--chip:#21262d;--accent:#a3d468;--accent-soft:#1e2a12;--accent-fg:#0d1117;--warn:#fb923c}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:17px/1.5 "Atkinson","Segoe UI",Roboto,Arial,sans-serif}
+header.top{max-width:1100px;margin:0 auto;padding:14px 16px 0}
+.toprow{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+header.top h1{margin:0;font:800 22px/1.15 "Archivo","Arial Narrow",Arial,sans-serif;display:flex;align-items:center}
+header.top p{margin:6px 0 0;color:var(--muted);font-size:max(14px,var(--fs-min,15px))}
+.appicon{width:40px;height:40px;border-radius:9px;margin:0 10px 0 0;box-shadow:0 1px 3px rgba(0,0,0,.25);flex:none}
+.cbtn{display:inline-flex;align-items:center;min-height:44px;border:1.5px solid var(--line);background:var(--surface);color:var(--accent);border-radius:10px;padding:6px 14px;font-weight:700;text-decoration:none;font-size:15px;cursor:pointer}
+nav#nav{max-width:1100px;margin:12px auto 0;padding:0 16px 12px;display:flex;flex-wrap:wrap;gap:6px;border-bottom:1px solid var(--line)}
+nav#nav button{border:1.5px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:8px 12px;font:600 15px "Atkinson",Arial,sans-serif;min-height:44px;cursor:pointer}
+nav#nav button.on{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+main{max-width:1100px;margin:0 auto;padding:16px}
+h2{font:800 28px/1.15 "Archivo","Arial Narrow",Arial,sans-serif;margin:8px 0 12px}
+h3{font:800 21px/1.2 "Archivo","Arial Narrow",Arial,sans-serif;margin:16px 0 8px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:0 0 14px}
+.muted{color:var(--muted)}.small{font-size:max(15px,var(--fs-min,15px))}
+.seance{border-left:6px solid var(--accent)}
+.seance h3{margin-top:0}
+.obj{font-size:18px}
+.tl{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.tl span{background:var(--accent-soft);border-radius:8px;padding:4px 10px;font-size:15px}
+.tl b{font-family:"Archivo",Arial,sans-serif}
+.fiche{border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin:10px 0;background:var(--bg)}
+.fiche h4{margin:0 0 6px;font:800 18px "Archivo",Arial,sans-serif}
+.fiche .cat{display:inline-block;background:var(--accent);color:var(--accent-fg);border-radius:6px;padding:0 8px;font-size:14px;font-weight:700;margin-right:6px}
+.fiche ol,.fiche ul{margin:6px 0;padding-left:22px}
+.var{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:6px}.var p{margin:0;padding:6px 8px;border-radius:8px;background:var(--chip)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:12px}
+svg{max-width:100%;height:auto;display:block}
+/* Exercices illustrés (EvoluGym) et photos des fiches Access Gym (FFG) */
+table.rot{border-collapse:collapse;font-size:17px}table.rot td,table.rot th{border:1px solid var(--line);padding:6px 10px;text-align:center}
+.aide{background:var(--accent-soft);border-radius:12px;padding:10px 12px}
+@media (max-width:700px){.var{grid-template-columns:1fr}h2{font-size:24px}}
+@media print{
+  @page{size:A4;margin:11mm}
+  body{background:#fff;color:#000;font-size:10pt}
+  header.top,nav,.noprint{display:none!important}
+  .card{border:0;padding:0;margin:0 0 8px}
+  .seance{border-left:0;break-before:page}.seance:first-of-type{break-before:auto}
+  .fiche{break-inside:avoid}
+}
+</style>
+<script src="eps-commun.js" defer></script>
+<script>/* Ouvert depuis l'écran de cours (bouton Outils) : on ne garde que le contenu de l'outil. */
+try{if(window.self!==window.top)document.documentElement.classList.add('outil')}catch(e){document.documentElement.classList.add('outil')}</script>
+<style>html.outil body>header.top,html.outil nav#nav{display:none!important}</style>
+<style>/* Lisibilité terrain : textes à 15 px minimum à l'écran ; tailles d'origine à l'impression. */@media print{:root{--fs-min:0px}}</style>
+<link rel="stylesheet" href="eps-charte-v1.css">
+<style>/* Charte v1 — Musculation : couleur de l'activité ; cycle : t=normal */
+:root{--act:#4d7c0f;--act-fonce:#304d09;--act-pale:#eef5e3;--accent:#4d7c0f;--accent-soft:#eef5e3;--accent-fg:#ffffff;--sport:#4d7c0f}
+:root[data-theme="dark"]{--accent:#a3d468;--accent-soft:#1e2a12;--accent-fg:#0d1117;--sport:#a3d468}
+</style>
+<style>
+/* Propre à la musculation */
+.mob{border:2px solid var(--mc);border-radius:14px;padding:10px 12px;margin:0 0 12px;background:var(--surface)}
+.mob h3{margin:0 0 6px;color:var(--mc)}.mob h3 small{font:700 15px "Atkinson",Arial,sans-serif;color:var(--muted);margin-left:6px}
+.mob table,.tb{width:100%;border-collapse:collapse;font-size:16px}
+.mob th,.mob td,.tb th,.tb td{border-top:1px solid var(--line);padding:6px 8px 6px 0;text-align:left;vertical-align:top}
+.mob th{color:var(--muted);width:40%}
+.ech{display:grid;gap:4px}.ech div{display:flex;gap:10px;align-items:center;border-radius:10px;padding:6px 10px;color:#1c2128}
+.ech div>b{font:800 24px/1 "Archivo",Arial,sans-serif;min-width:1.4em;text-align:center}
+.ech em{font-style:normal;font-weight:700;background:rgba(255,255,255,.75);border-radius:6px;padding:0 6px;margin-left:4px}
+.ats{margin:0;padding-left:22px}.ats li{margin:4px 0}.ats li span{color:var(--muted);font-size:15px}
+.evt{width:100%;border-collapse:collapse}.evt th,.evt td{border-top:1px solid var(--line);padding:6px 8px 6px 0;text-align:left;vertical-align:top}.evt small{display:block;color:var(--muted)}
+.nuage{display:flex;flex-wrap:wrap;gap:6px 16px;align-items:center;justify-content:center;min-height:180px;padding:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.nuage span{font-family:"Archivo",Arial,sans-serif;font-weight:800;color:var(--accent);line-height:1.05}
+.nuage span.f{color:#b45309}
+.rang{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:8px 0}
+.rang input,.rang select{min-height:48px;font:inherit;padding:6px 10px;border:1.5px solid var(--line);border-radius:10px;background:var(--surface);color:var(--ink)}
+.bt2{min-height:48px;border:2px solid var(--accent);background:var(--accent);color:var(--accent-fg);border-radius:12px;padding:0 16px;font:700 16px "Atkinson",Arial,sans-serif;cursor:pointer}
+.bt2.clair{background:var(--surface);color:var(--accent)}
+.equipes{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:12px}
+.eq{border-radius:16px;padding:14px;color:#fff}.eq h3{margin:0;color:#fff}.eq .gros{font:800 44px/1 "Archivo",Arial,sans-serif;margin:6px 0}
+.eq small{display:block;opacity:.9}
+.scan{position:fixed;inset:0;background:rgba(0,0,0,.85);z-index:50;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;color:#fff;padding:12px}
+.scan video{max-width:100%;max-height:70vh;border-radius:12px}
+.scan .msg{font-size:18px;min-height:1.5em;text-align:center}
+.carte-at{border-left:6px solid var(--accent)}
+.carte-at .tag{display:inline-block;background:var(--chip);border-radius:6px;padding:0 8px;font-size:14px;margin-right:4px}
+</style>
+</head>
+<body>
+<header class="top"><div class="toprow"><h1><img class="appicon" src="icon-192.png" alt="" width="40" height="40">Cycle musculation · CA5 · Terminale</h1><a class="cbtn" href="./">‹ Écran de cours</a></div>
+<p>9 séances · binômes · salle de judo · 1 h 10 de pratique · démarche d'après Laurent Lecomte (lycée A.-Daudet, Nîmes) · <span id="ver"></span></p></header>
+<nav id="nav" aria-label="Onglets"></nav>
+<main id="main"></main>
+<script src="muscu-donnees.js"></script>
+<script src="jsqr.js"></script>
+<script>
+'use strict';
+const $ = s => document.querySelector(s);
+const esc = escM;
+const ul = l => `<ul>${l.map(x => `<li>${esc(x)}</li>`).join("")}</ul>`;
+const lireL = (k, d) => {try{const v = localStorage.getItem(k);return v ? JSON.parse(v) : d}catch(e){return d}};
+const ecrireL = (k, v) => {try{localStorage.setItem(k, JSON.stringify(v))}catch(e){}};
+const jourISO = () => {const d = new Date();return d.getFullYear() + "-" + String(d.getMonth() + 1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")};
+$("#ver").textContent = MUSCU_VERSION;
+
+/* ---------- Lecture des QR « MUS » des téléphones (mots, défi) ---------- */
+function b64urlToBytes(s){s = s.replace(/-/g, "+").replace(/_/g, "/");while(s.length % 4)s += "=";const b = atob(s), u = new Uint8Array(b.length);for(let i = 0;i < b.length;i++)u[i] = b.charCodeAt(i);return u}
+async function decoderQR(txt){
+  const m = /^MUS([01]):([A-Za-z0-9_-]+)$/.exec(String(txt || "").trim());if(!m)throw new Error("Ce QR ne vient pas de l'appli musculation.");
+  let bytes = b64urlToBytes(m[2]);
+  if(m[1] === "1"){bytes = new Uint8Array(await new Response(new Blob([bytes]).stream().pipeThrough(new DecompressionStream("deflate-raw"))).arrayBuffer())}
+  const o = JSON.parse(new TextDecoder().decode(bytes));if(!o || o.a !== "MUS")throw new Error("QR non reconnu.");return o;
+}
+let flux = null;
+function scanner(onObjet){
+  const v = document.createElement("div");v.className = "scan";
+  v.innerHTML = `<video playsinline muted></video><div class="msg">Vise le QR « Mots et défi » du téléphone.</div><button class="bt2" type="button">Terminé</button>`;
+  document.body.appendChild(v);
+  const video = v.querySelector("video"), msg = v.querySelector(".msg"), c = document.createElement("canvas"), x = c.getContext("2d", {willReadFrequently:true});
+  let vus = new Set(), fini = false;
+  const fermer = () => {fini = true;if(flux)flux.getTracks().forEach(t => t.stop());flux = null;v.remove();aller(courant)};
+  v.querySelector("button").onclick = fermer;
+  navigator.mediaDevices.getUserMedia({video:{facingMode:"environment"}}).then(s => {flux = s;video.srcObject = s;video.play();boucle()}).catch(() => {msg.textContent = "Caméra indisponible : autorise la caméra pour cette page."});
+  function boucle(){
+    if(fini)return;
+    if(video.readyState >= 2){c.width = video.videoWidth;c.height = video.videoHeight;x.drawImage(video, 0, 0);
+      const r = jsQR(x.getImageData(0, 0, c.width, c.height).data, c.width, c.height);
+      if(r && r.data && !vus.has(r.data)){vus.add(r.data);decoderQR(r.data).then(o => {const t = onObjet(o);msg.textContent = "✓ " + t;bip(true)}).catch(e => {msg.textContent = e.message;bip(false)})}}
+    requestAnimationFrame(boucle);
+  }
+}
+let ac = null;
+function bip(ok){try{ac = ac || new (window.AudioContext || window.webkitAudioContext)();const o = ac.createOscillator(), g = ac.createGain();o.type = "square";o.frequency.value = ok ? 1320 : 330;g.gain.value = .25;o.connect(g).connect(ac.destination);o.start();o.stop(ac.currentTime + .15)}catch(e){}}
+
+/* ---------- Nuage de mots (S1-S2) : mots reçus des téléphones ou ajoutés à la main ---------- */
+const KN = "mu-nuage";
+function nuageDuJour(){const n = lireL(KN, {});const k = jourISO();if(!n[k])n[k] = {debut:[], fin:[], binomes:[]};return [n, k]}
+function nuageHTML(mots, cls){
+  const c = {};mots.forEach(m => {const t = String(m).trim().toLowerCase();if(t)c[t] = (c[t] || 0) + 1});
+  const l = Object.entries(c).sort((a, b) => b[1] - a[1]);if(!l.length)return `<p class="muted">Pas encore de mots.</p>`;
+  const max = l[0][1];return l.map(([t, n]) => `<span class="${cls}" style="font-size:${Math.round(18 + 42 * n / max)}px" title="${n} fois">${esc(t)}</span>`).join(" ");
+}
+function recevoirMots(o){
+  const [n, k] = nuageDuJour();const id = o.b || Math.random().toString(36).slice(2);
+  if(n[k].binomes.includes(id + (o.s || "")))return "déjà reçu";
+  n[k].binomes.push(id + (o.s || ""));(o.debut || []).forEach(m => n[k].debut.push(m));(o.fin || []).forEach(m => n[k].fin.push(m));
+  ecrireL(KN, n);if(o.defi)recevoirDefi(o);return `${(o.debut || []).length + (o.fin || []).length} mots reçus${o.defi ? ", défi équipe " + o.defi.e : ""}`;
+}
+const KE = "mu-echelle";
+function echelleClasse(){return lireL(KE, {})}
+function echelleHTMLclasse(){const e = echelleClasse();return `<div class="ech">${ECHELLE.map(([n, t, d, c]) => `<div style="background:${c}"><b>${n}</b><span><b>${esc(t)}</b> ${esc(d)}${(e[n] || []).map(m => `<em>${esc(m)}</em>`).join("")}</span></div>`).join("")}</div>`}
+
+/* ---------- Défi 10 RM par équipes ---------- */
+const EQUIPES = {A:["Équipe A","#1d4ed8"], B:["Équipe B","#be185d"], C:["Équipe C","#b45309"], D:["Équipe D","#0f766e"]};
+const COEF_QUALITE = 5;   // 1 point de qualité = 5 kg dans le score
+const KD = "mu-defi";
+function recevoirDefi(o){
+  const d = lireL(KD, {}), k = jourISO();d[k] = d[k] || {};const id = (o.b || "") + "|" + o.defi.e;
+  d[k][id] = {e:o.defi.e, kg:+o.defi.kg || 0, q:+o.defi.q || 0};ecrireL(KD, d);return "défi équipe " + o.defi.e;
+}
+function totauxDefi(){
+  const d = lireL(KD, {})[jourISO()] || {}, t = {};
+  Object.keys(EQUIPES).forEach(e => t[e] = {kg:0, q:0, n:0});
+  Object.values(d).forEach(x => {if(t[x.e]){t[x.e].kg += x.kg;t[x.e].q += x.q;t[x.e].n++}});
+  return t;
+}
+
+/* ---------- Onglets ---------- */
+const T = {
+ seances:["Les 9 séances", () => `<h2>Les 9 séances</h2><p class="noprint"><button class="bt2 clair" type="button" onclick="print()">Imprimer les séances</button></p>` + SEANCES.map(s => `<section class="card seance"><h3>${s.id} · ${esc(s.titre)}</h3><p class="obj">${esc(s.obj)}</p>
+   <div class="tl">${s.tl.map(t => `<span>${esc(t[0])} <b>${t[1]}′</b></span>`).join("")}</div><p class="small"><b>Installation.</b> ${esc(s.install)}</p>
+   ${s.fiches.map(f => `<div class="fiche"><h4><span class="cat">${esc(f.cat)}</span>${esc(f.titre)} · ${f.duree} min</h4><p class="small">${esc(f.dispo)}</p>${f.roles ? `<p class="small"><b>Rôles.</b> ${esc(f.roles)}</p>` : ""}<ol>${(f.deroul || []).map(d => `<li>${esc(d)}</li>`).join("")}</ol>${f.crit ? `<p class="small"><b>Critère.</b> ${esc(f.crit)}</p>` : ""}${f.reussite ? `<p class="small"><b>Réussi si</b> ${esc(f.reussite)}</p>` : ""}${f.moins || f.plus ? `<div class="var">${f.moins ? `<p><b>− Plus facile.</b> ${esc(f.moins)}</p>` : "<p></p>"}${f.plus ? `<p><b>+ Plus difficile.</b> ${esc(f.plus)}</p>` : "<p></p>"}</div>` : ""}</div>`).join("")}
+   <p class="small"><b>Bilan.</b> ${esc(s.bilan)}</p></section>`).join("")],
+ nuage:["Nuage de mots", () => {const [n, k] = nuageDuJour();return `<h2>Nuage de mots de la classe</h2>
+   <p class="aide">S1 : début et fin d'échauffement. S2 : première et dernière série du test. Chaque binôme montre le QR « Mots et défi » de son téléphone en fin de séance ; tu peux aussi ajouter un mot à la main.</p>
+   <p class="rang noprint"><button class="bt2" type="button" data-scan>📷 Scanner les téléphones</button><input id="mot" placeholder="Ajouter un mot" maxlength="30"><select id="mom"><option value="debut">Début (léger)</option><option value="fin">Fin (dur)</option></select><button class="bt2 clair" type="button" data-ajmot>Ajouter</button></p>
+   <h3>Début · effort léger</h3><div class="nuage">${nuageHTML(n[k].debut, "")}</div>
+   <h3>Fin · effort dur</h3><div class="nuage">${nuageHTML(n[k].fin, "f")}</div>
+   <p class="small muted">${n[k].binomes.length} téléphone(s) reçu(s) aujourd'hui. Aucun nom n'est transmis : seulement les mots.</p>
+   <h2>Échelle commune de la classe</h2><p class="aide">Range les mots du nuage de léger (1) à maximal (10). Les élèves les retrouvent ensuite pour construire leur propre échelle (S5).</p>
+   <p class="rang noprint"><input id="motE" placeholder="Mot à ranger" maxlength="30" list="motsL"><datalist id="motsL">${[...new Set(n[k].debut.concat(n[k].fin).map(m => String(m).toLowerCase()))].map(m => `<option value="${esc(m)}">`).join("")}</datalist><select id="nivE">${ECHELLE.map(e => `<option value="${e[0]}">${e[0]} · ${esc(e[1])}</option>`).join("")}</select><button class="bt2 clair" type="button" data-ajE>Ranger</button><button class="bt2 clair" type="button" data-videE>Vider l'échelle</button></p>
+   ${echelleHTMLclasse()}
+   <p class="noprint"><button class="bt2 clair" type="button" data-videN>Vider le nuage du jour</button></p>`}],
+ defi:["Défi 10 RM", () => {const t = totauxDefi();const sc = e => Math.round(t[e].kg + COEF_QUALITE * t[e].q);const cl = Object.keys(EQUIPES).sort((a, b) => sc(b) - sc(a));
+   return `<h2>Défi 10 RM par équipes (S2)</h2><p class="aide">Score = kilos soulevés (meilleure charge à 10 répétitions de chaque élève, sur les 6 ateliers) + ${COEF_QUALITE} × les points de qualité (séries sans No REP, montée progressive ; − 1 par faute). Chaque binôme montre son QR « Mots et défi ».</p>
+   <p class="rang noprint"><button class="bt2" type="button" data-scan>📷 Scanner les téléphones</button></p>
+   <div class="equipes">${cl.map((e, i) => `<div class="eq" style="background:${EQUIPES[e][1]}"><h3>${i === 0 && sc(e) > 0 ? "🏆 " : ""}${EQUIPES[e][0]}</h3><div class="gros">${sc(e)}</div><small>${Math.round(t[e].kg)} kg · ${t[e].q} points de qualité · ${t[e].n} binôme(s)</small></div>`).join("")}</div>
+   <h3 class="noprint">Saisie à la main</h3><p class="rang noprint"><select id="eqM">${Object.keys(EQUIPES).map(e => `<option>${e}</option>`).join("")}</select><input id="kgM" type="number" inputmode="decimal" placeholder="kg" style="width:110px"><input id="qM" type="number" inputmode="numeric" placeholder="qualité" style="width:110px"><button class="bt2 clair" type="button" data-ajD>Ajouter</button><button class="bt2 clair" type="button" data-videD>Remettre à zéro</button></p>`}],
+ calculette:["Calculette", () => `<h2>Calculette des charges</h2>
+   <div class="card"><p class="rang"><label>Charge max <input id="cm" type="number" inputmode="decimal" style="width:120px"> kg</label><label>Support <select id="sup">${Object.entries(SUPPORTS).filter(([k, s]) => s.disques || s.fixes).map(([k, s]) => `<option value="${k}">${esc(s.nom)}</option>`).join("")}</select></label></p>
+   <p class="rang small"><b>Ou à partir d'une série :</b> <input id="ch" type="number" inputmode="decimal" placeholder="charge" style="width:110px"> kg × <input id="rp" type="number" inputmode="numeric" placeholder="rép." style="width:90px"> répétitions (3 à 10)</p><div id="calc"></div></div>`],
+ mobiles:["Les 3 mobiles", () => `<h2>Les 3 mobiles</h2><div class="grid">${MOBILES_ORDRE.map(mobileHTML).join("")}</div><p class="aide"><b>Force maximale (80-90 %) retirée du cycle</b> : pas sécuritaire avec des débutants, et elle ne correspond à aucun thème du référentiel.</p><h3>Échelle de ressentis (départ commun)</h3>${echelleHTML()}`],
+ ateliers:["Ateliers", () => `<h2>Les ateliers</h2><p class="aide">Ateliers du test 10 RM : ${ATELIERS_TEST.map(id => esc(atelier(id).nom)).join(", ")}. Le squat reste hors test (pas de cage à squat).</p><div class="grid">${ATELIERS.map(a => `<section class="card carte-at"><h3>${a.n ? a.n + ". " : ""}${esc(a.nom)}</h3><p><span class="tag">${esc(a.groupe)}</span><span class="tag">${esc(SUPPORTS[a.support].nom)}</span>${a.test ? `<span class="tag">Test 10 RM</span>` : ""}${a.places ? `<span class="tag">${a.places} binômes max</span>` : ""}</p><p class="small muted">${esc(a.muscles)}</p>${ul(a.crit)}<p class="small"><b>Respiration.</b> ${esc(a.resp)}</p><p class="small"><b>Sécurité.</b> ${esc(a.secu)}</p>${a.niveaux ? `<p class="small"><b>Variantes.</b> ${a.niveaux.map((x, i) => (i + 1) + ". " + esc(x)).join(" · ")}</p>` : ""}${a.video ? `<p class="small muted">Vidéo : ${esc(a.video)} (lien PeerTube à ajouter)</p>` : ""}</section>`).join("")}</div>`],
+ securite:["Sécurité", () => `<h2>Sécurité</h2><div class="card">${ul(SECU.regles)}</div><h3>Angles articulaires</h3><div class="grid">${SECU.angles.map(a => `<section class="card"><h3>${esc(a[0])}</h3><p>${esc(a[1])}</p></section>`).join("")}</div><h3>Respiration</h3><div class="card"><p>${esc(SECU.respiration)}</p></div><p class="aide"><b>${esc(SECU.devise)}</b></p><h3>Signes de fatigue que le partenaire repère</h3><div class="card">${ul(SIGNES)}</div>`],
+ evaluation:["Évaluation", () => `<h2>Évaluation CA5 (protocole 2026)</h2>${schema("eval")}<h3>AFL3 : un rôle évalué parmi deux</h3><div class="grid">${EVAL.roles.map(r => `<section class="card"><h3>${esc(r[1])}</h3><p>${esc(r[2])}</p></section>`).join("")}</div>
+   <div class="card"><p><b>S6-S7</b> : évaluation AFL2 et AFL3 (2 fois). <b>S8</b> : AFL1 moitié A (moitié B partenaire). <b>S9</b> : AFL1 moitié B.</p><p>L'outil prof (musculation-prof) lira les carnets pour l'analyse et la régulation ; il n'est pas encore construit.</p></div>`],
+ sources:["Sources", () => `<h2>Sources et crédits</h2><div class="card">${SOURCES.map(s => `<p><b>${esc(s[0])}.</b> ${esc(s[1])}</p>`).join("")}</div>`]
+};
+let courant = "seances";
+function aller(id){
+  if(!T[id]) id = "seances";courant = id;
+  $("#nav").innerHTML = Object.entries(T).map(([k, v]) => `<button type="button" class="${k === id ? "on" : ""}" data-t="${k}">${v[0]}</button>`).join("");
+  $("#main").innerHTML = T[id][1]();
+  history.replaceState(null, "", "#tab-" + id);
+  if(id === "calculette")calc();
+}
+function calc(){
+  const z = $("#calc");if(!z)return;
+  let cm = parseFloat(String($("#cm").value).replace(",", "."));
+  const ch = parseFloat(String($("#ch").value).replace(",", ".")), rp = parseInt($("#rp").value, 10);
+  if(ch > 0 && rp){const b = brzycki(ch, rp);if(b){cm = b;$("#cm").value = b}else{z.innerHTML = `<p class="muted">Entre 3 et 10 répétitions.</p>`;return}}
+  if(!(cm > 0)){z.innerHTML = `<p class="muted">Entre une charge max, ou une charge et un nombre de répétitions.</p>`;return}
+  const sup = $("#sup").value, mobDe = p => MOBILES_ORDRE.filter(k => p >= MOBILES[k].pct[0] && p <= MOBILES[k].pct[1]);
+  z.innerHTML = `<table class="tb"><tr><th>%</th><th>Charge visée</th><th>Charge réelle</th><th>Mobile</th></tr>${[30,40,50,55,60,65,70,75,80].map(p => {const r = chargeReelle(sup, cm * p / 100);
+    return `<tr><td><b>${p} %</b></td><td>${fmtKg(Math.round(cm * p / 10) / 10)}</td><td>${r ? `<b>${fmtKg(r.charge)}</b> <span class="small muted">${esc(r.compo)}</span>` : "—"}</td><td>${mobDe(p).map(k => `<span style="color:${MOBILES[k].coul};font-weight:700">${MOBILES[k].nom}</span>`).join(" · ")}</td></tr>`}).join("")}</table>`;
+}
+document.addEventListener("input", e => {if(["cm", "ch", "rp"].includes(e.target.id))calc()});
+document.addEventListener("change", e => {if(e.target.id === "sup")calc()});
+document.addEventListener("click", e => {
+  const b = e.target.closest("[data-t]");if(b){aller(b.dataset.t);scrollTo(0, 0);return}
+  if(e.target.closest("[data-scan]")){scanner(o => o.t === "defi" ? recevoirDefi(o) : recevoirMots(o));return}
+  if(e.target.closest("[data-ajmot]")){const m = $("#mot").value.trim();if(!m)return;const [n, k] = nuageDuJour();n[k][$("#mom").value].push(m);ecrireL(KN, n);aller("nuage");return}
+  if(e.target.closest("[data-videN]")){if(!confirm("Vider le nuage de mots d'aujourd'hui ?"))return;const n = lireL(KN, {});delete n[jourISO()];ecrireL(KN, n);aller("nuage");return}
+  if(e.target.closest("[data-ajE]")){const m = $("#motE").value.trim().toLowerCase();if(!m)return;const ech = echelleClasse(), v = +$("#nivE").value;Object.keys(ech).forEach(k => ech[k] = ech[k].filter(x => x !== m));(ech[v] = ech[v] || []).push(m);ecrireL(KE, ech);aller("nuage");return}
+  if(e.target.closest("[data-videE]")){if(!confirm("Vider l'échelle commune ?"))return;ecrireL(KE, {});aller("nuage");return}
+  if(e.target.closest("[data-ajD]")){recevoirDefi({b:"main" + Date.now(), defi:{e:$("#eqM").value, kg:parseFloat($("#kgM").value) || 0, q:parseInt($("#qM").value, 10) || 0}});aller("defi");return}
+  if(e.target.closest("[data-videD]")){if(!confirm("Remettre le défi d'aujourd'hui à zéro ?"))return;const d = lireL(KD, {});delete d[jourISO()];ecrireL(KD, d);aller("defi");return}
+});
+aller((location.hash.match(/^#tab-(\w+)/) || [])[1]);
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(() => {});
+</script>
+<script src="eps-maj.js"></script>
+</body>
+</html>
