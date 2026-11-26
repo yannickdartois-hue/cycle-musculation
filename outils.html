@@ -34,6 +34,7 @@ h3{font:800 21px/1.2 "Archivo","Arial Narrow",Arial,sans-serif;margin:16px 0 8px
 .card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:14px 16px;margin:0 0 14px}
 .muted{color:var(--muted)}.small{font-size:max(15px,var(--fs-min,15px))}
 .seance{border-left:6px solid var(--accent)}
+.docs-s1{display:flex;flex-wrap:wrap;gap:8px;align-items:center}.docs-s1 b{width:100%}.docs-s1 a{display:inline-flex;align-items:center;min-height:46px;padding:0 14px;text-decoration:none;border-radius:12px;white-space:normal;line-height:1.2}
 .seance h3{margin-top:0}
 .obj{font-size:18px}
 .tl{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
@@ -198,9 +199,11 @@ function totauxDefi(){
 }
 
 /* ---------- Onglets ---------- */
+/* S1 : documents de mise en place du circuit (PDF gardés hors ligne) */
+const PLAN_S1 = `<p class="noprint docs-s1"><b>Mise en place.</b> <a class="bt2 clair" href="s1-plan-16-ateliers.pdf" target="_blank" rel="noopener">📄 Plan du dojo (4 colonnes × 4 ateliers)</a> <a class="bt2 clair" href="s1-fiches-16-ateliers.pdf" target="_blank" rel="noopener">🖨️ Fiches des 16 ateliers (A4)</a></p>`;
 const T = {
  seances:["Les 9 séances", () => `<h2>Les 9 séances</h2><p class="noprint"><button class="bt2 clair" type="button" onclick="print()">Imprimer les séances</button></p>` + SEANCES.map(s => `<section class="card seance"><h3>${s.id} · ${esc(s.titre)}</h3><p class="obj">${esc(s.obj)}</p>
-   <div class="tl">${s.tl.map(t => `<span>${esc(t[0])} <b>${t[1]}′</b></span>`).join("")}</div><p class="small"><b>Installation.</b> ${esc(s.install)}</p>
+   <div class="tl">${s.tl.map(t => `<span>${esc(t[0])} <b>${t[1]}′</b></span>`).join("")}</div><p class="small"><b>Installation.</b> ${esc(s.install)}</p>${s.id === "S1" ? PLAN_S1 : ""}
    ${s.fiches.map(f => `<div class="fiche"><h4><span class="cat">${esc(f.cat)}</span>${esc(f.titre)} · ${f.duree} min</h4><p class="small">${esc(f.dispo)}</p>${f.roles ? `<p class="small"><b>Rôles.</b> ${esc(f.roles)}</p>` : ""}<ol>${(f.deroul || []).map(d => `<li>${esc(d)}</li>`).join("")}</ol>${f.crit ? `<p class="small"><b>Critère.</b> ${esc(f.crit)}</p>` : ""}${f.reussite ? `<p class="small"><b>Réussi si</b> ${esc(f.reussite)}</p>` : ""}${f.moins || f.plus ? `<div class="var">${f.moins ? `<p><b>− Plus facile.</b> ${esc(f.moins)}</p>` : "<p></p>"}${f.plus ? `<p><b>+ Plus difficile.</b> ${esc(f.plus)}</p>` : "<p></p>"}</div>` : ""}</div>`).join("")}
    <p class="small"><b>Bilan.</b> ${esc(s.bilan)}</p></section>`).join("")],
  nuage:["Nuage de mots", () => {const [n, k] = nuageDuJour();return `<h2>Nuage de mots de la classe</h2>
