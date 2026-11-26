@@ -126,6 +126,8 @@ try{if(window.self!==window.top)document.documentElement.classList.add('outil')}
 <main id="main"></main>
 <script src="muscu-donnees.js"></script>
 <script src="jsqr.js"></script>
+<script src="eps-export.js"></script>
+<script src="export-muscu.js"></script>
 <script>
 'use strict';
 const $ = s => document.querySelector(s);
@@ -202,7 +204,7 @@ function totauxDefi(){
 /* S1 : documents de mise en place du circuit (PDF gardés hors ligne) */
 const PLAN_S1 = `<p class="noprint docs-s1"><b>Mise en place.</b> <a class="bt2 clair" href="s1-plan-16-ateliers.pdf" target="_blank" rel="noopener">📄 Plan du dojo (4 colonnes × 4 ateliers)</a> <a class="bt2 clair" href="s1-fiches-16-ateliers.pdf" target="_blank" rel="noopener">🖨️ Fiches des 16 ateliers (A4 recto-verso)</a></p>`;
 const T = {
- seances:["Les 9 séances", () => `<h2>Les 9 séances</h2><p class="noprint"><button class="bt2 clair" type="button" onclick="print()">Imprimer les séances</button></p>` + SEANCES.map(s => `<section class="card seance"><h3>${s.id} · ${esc(s.titre)}</h3><p class="obj">${esc(s.obj)}</p>
+ seances:["Les 9 séances", () => `<h2>Les 9 séances</h2><p class="noprint exp-l"><button class="bt2" type="button" data-export="pdf">📄 Exporter en PDF</button> <button class="bt2" type="button" data-export="docx">📝 Exporter en Word</button> <button class="bt2 clair" type="button" onclick="print()">Imprimer les séances</button></p><p class="noprint small muted">PDF et Word : page de garde, sommaire, une page par séance (bilan et enjeux, objectif, contenu détaillé, texte prêt pour Pronote, à préparer). Fonctionne sans réseau.</p>` + SEANCES.map(s => `<section class="card seance"><h3>${s.id} · ${esc(s.titre)}</h3><p class="obj">${esc(s.obj)}</p>
    <div class="tl">${s.tl.map(t => `<span>${esc(t[0])} <b>${t[1]}′</b></span>`).join("")}</div><p class="small"><b>Installation.</b> ${esc(s.install)}</p>${s.id === "S1" ? PLAN_S1 : ""}
    ${s.fiches.map(f => `<div class="fiche"><h4><span class="cat">${esc(f.cat)}</span>${esc(f.titre)} · ${f.duree} min</h4><p class="small">${esc(f.dispo)}</p>${f.roles ? `<p class="small"><b>Rôles.</b> ${esc(f.roles)}</p>` : ""}<ol>${(f.deroul || []).map(d => `<li>${esc(d)}</li>`).join("")}</ol>${f.crit ? `<p class="small"><b>Critère.</b> ${esc(f.crit)}</p>` : ""}${f.reussite ? `<p class="small"><b>Réussi si</b> ${esc(f.reussite)}</p>` : ""}${f.moins || f.plus ? `<div class="var">${f.moins ? `<p><b>− Plus facile.</b> ${esc(f.moins)}</p>` : "<p></p>"}${f.plus ? `<p><b>+ Plus difficile.</b> ${esc(f.plus)}</p>` : "<p></p>"}</div>` : ""}</div>`).join("")}
    <p class="small"><b>Bilan.</b> ${esc(s.bilan)}</p></section>`).join("")],
@@ -231,6 +233,13 @@ const T = {
    <div class="card"><p><b>S4 à S8</b> : après chaque exercice, l'élève analyse (AFL2) et son partenaire le coache (AFL3) ; répartition choisie dès la S4, verrouillée en S9 (évaluation sur 3 exercices tirés au sort par l'outil prof parmi ceux réalisés en S7 et S8) ; rôle AFL3 : coach pour tous (point clé, répétitions propres, conseil, objectif). <b>S7</b> : projet. <b>S8</b> : AFL1 moitié A (moitié B partenaire). <b>S9</b> : AFL1 moitié B.</p><p>L'outil prof (<a href="https://yannickdartois-hue.github.io/musculation-prof/">musculation-prof</a>) importe les listes Pronote, donne le QR de la classe (qui ouvre aussi la séance du jour), et récupère les carnets. La grille de notation viendra dans une version suivante.</p></div>`],
  sources:["Sources", () => `<h2>Sources et crédits</h2><div class="card">${SOURCES.map(s => `<p><b>${esc(s[0])}.</b> ${esc(s[1])}</p>`).join("")}</div>`]
 };
+/* Chantier 14 : export PDF / Word du cycle (eps-export.js + export-muscu.js), hors connexion */
+async function exporter(b){
+  const f = b.dataset.export, t = b.textContent;b.disabled = true;b.textContent = "⏳ Préparation…";
+  try{const M = MuscuExport.modele();if(f === "pdf")await EPSExport.pdf(M);else EPSExport.docx(M);b.textContent = "✓ Fichier enregistré"}
+  catch(err){alert("Export impossible : " + err.message);b.textContent = t}
+  setTimeout(() => {b.disabled = false;b.textContent = t}, 2500);
+}
 let courant = "seances";
 function aller(id){
   if(!T[id]) id = "seances";courant = id;
@@ -253,6 +262,7 @@ document.addEventListener("input", e => {if(["cm", "ch", "rp"].includes(e.target
 document.addEventListener("change", e => {if(e.target.id === "sup")calc()});
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-t]");if(b){aller(b.dataset.t);scrollTo(0, 0);return}
+  const x = e.target.closest("[data-export]");if(x){exporter(x);return}
   if(e.target.closest("[data-scan]")){scanner(o => o.t === "defi" ? recevoirDefi(o) : recevoirMots(o));return}
   if(e.target.closest("[data-ajmot]")){const m = $("#mot").value.trim();if(!m)return;const [n, k] = nuageDuJour();n[k][$("#mom").value].push(m);ecrireL(KN, n);aller("nuage");return}
   if(e.target.closest("[data-videN]")){if(!confirm("Vider le nuage de mots d'aujourd'hui ?"))return;const n = lireL(KN, {});delete n[jourISO()];ecrireL(KN, n);aller("nuage");return}
