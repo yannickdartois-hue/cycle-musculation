@@ -28,6 +28,11 @@ const dateFr=()=>new Date().toLocaleDateString('fr-FR',{day:'numeric',month:'lon
 async function pdf(M){
   const {jsPDF}=await chargerJsPDF();
   const d=new jsPDF({unit:'mm',format:'a4',compress:true});
+  /* Helvetica (Windows-1252) : les rares signes hors de ce jeu sont écrits en équivalents lisibles */
+  const SF={'→':'->','←':'<-','−':'-','≥':'>=','≤':'<=','≈':'env.','≠':'!=','′':"'",'″':'"','✓':'v','•':'•'};
+  const sf=t=>String(t).replace(/[^\u0000-\u00ff€‚ƒ„…†‡ˆ‰Š‹ŒŽ‘’“”•–—˜™š›œžŸ]/g,c=>SF[c]!=null?SF[c]:'?');
+  {const T=d.text.bind(d),W=d.getTextWidth.bind(d),S=d.splitTextToSize.bind(d);
+   d.text=(t,...a)=>T(Array.isArray(t)?t.map(sf):sf(t),...a);d.getTextWidth=t=>W(sf(t));d.splitTextToSize=(t,...a)=>S(sf(t),...a)}
   d.setProperties({title:M.titre,subject:M.sousTitre||'',creator:'MON EPS',author:M.auteur||''});
   const W=210,H=297,G=20,D=20,HAUT=20,BAS=22,LARG=W-G-D,AC=hex(M.couleur),GRIS=[90,100,117],ENCRE=[23,32,51];
   let y=HAUT;const pagesSec={},liens=[];

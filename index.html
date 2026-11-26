@@ -53,9 +53,6 @@
 .mob-tete p{margin:8px 0 0;font-weight:700;font-size:15px;opacity:.95}
 @media (max-width:420px){.mob-tete img{height:120px}.mob .mob-tete h3{font-size:24px}}
 /* v3.2 : affiches des mobiles */
-
-
-
 .mob-bandeau{position:relative;border-radius:16px;overflow:hidden;margin:10px 0;box-shadow:0 3px 12px rgba(0,0,0,.25)}
 .mob-bandeau{background:#0f172a;text-align:center}.mob-bandeau img{display:block;margin:0 auto;width:100%;max-width:420px;height:auto}
 .mob-bandeau span{display:block;padding:8px 12px;color:#fff;font-weight:800}
@@ -110,7 +107,7 @@ body.niv-t{--niv:#4d7c0f;--sur-niv:#ffffff;--niv-pale:var(--act-pale)}
 /* Un seul niveau (Terminale). Chaque séance garde son déroulé (tl) et ses fiches, comme en gymnastique. */
 const courtM=t=>String(t||'').split(/\s:\s|\s·\s/)[0];
 const convM=f=>({t:f.titre,k:f.cat,disp:f.dispo,four:f.roles,deroul:f.deroul||[],cons:f.crit?[f.crit]:[],reus:f.reussite,moins:f.moins,plus:f.plus,spec:f.schema});
-const MUSC=SEANCES.map(S=>({id:S.id.toLowerCase(),n:S.id,title:S.titre,short:courtM(S.titre),obj:S.obj,prepare:S.prepare||[],install:S.install,bilan:S.bilan,
+const MUSC=SEANCES.map(S=>({id:S.id.toLowerCase(),pronote:S.pronote,n:S.id,title:S.titre,short:courtM(S.titre),obj:S.obj,prepare:S.prepare||[],install:S.install,bilan:S.bilan,
   tl:S.tl.map(t=>[t[0],String(t[1]),t[2]]),ex:S.fiches.map(convM),evalPage:false,status:/Évaluation AFL1/.test(S.titre)?'eval':''}));
 const APP={
   old:'outils.html',
@@ -142,6 +139,7 @@ const APP={
   bascule:s=>''
 };
 </script>
+<script src="eps-export.js"></script>
 <script src="ecran.js"></script>
 <script src="aide-ecran.js"></script>
 <script src="eps-aide.js"></script>
