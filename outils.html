@@ -200,7 +200,7 @@ function totauxDefi(){
 
 /* ---------- Onglets ---------- */
 /* S1 : documents de mise en place du circuit (PDF gardés hors ligne) */
-const PLAN_S1 = `<p class="noprint docs-s1"><b>Mise en place.</b> <a class="bt2 clair" href="s1-plan-16-ateliers.pdf" target="_blank" rel="noopener">📄 Plan du dojo (4 colonnes × 4 ateliers)</a> <a class="bt2 clair" href="s1-fiches-16-ateliers.pdf" target="_blank" rel="noopener">🖨️ Fiches des 16 ateliers (A4)</a></p>`;
+const PLAN_S1 = `<p class="noprint docs-s1"><b>Mise en place.</b> <a class="bt2 clair" href="s1-plan-16-ateliers.pdf" target="_blank" rel="noopener">📄 Plan du dojo (4 colonnes × 4 ateliers)</a> <a class="bt2 clair" href="s1-fiches-16-ateliers.pdf" target="_blank" rel="noopener">🖨️ Fiches des 16 ateliers (A4 recto-verso)</a></p>`;
 const T = {
  seances:["Les 9 séances", () => `<h2>Les 9 séances</h2><p class="noprint"><button class="bt2 clair" type="button" onclick="print()">Imprimer les séances</button></p>` + SEANCES.map(s => `<section class="card seance"><h3>${s.id} · ${esc(s.titre)}</h3><p class="obj">${esc(s.obj)}</p>
    <div class="tl">${s.tl.map(t => `<span>${esc(t[0])} <b>${t[1]}′</b></span>`).join("")}</div><p class="small"><b>Installation.</b> ${esc(s.install)}</p>${s.id === "S1" ? PLAN_S1 : ""}
