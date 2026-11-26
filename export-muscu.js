@@ -16,7 +16,9 @@
 'use strict';
 const MOB_S={S4:'tonif',S5:'volume',S6:'puiss'};
 const min=n=>n+' min';
+/* texte du cahier de textes : celui rédigé dans les données (s.pronote), sinon assemblé à partir de la séance */
 function texteProno(s,suiv){
+  if(s.pronote)return [s.pronote.contenu,s.pronote.retenir];
   const L=[s.id.replace('S','Séance ')+' — '+s.titre,'Objectif : '+s.obj,
     'Au programme : '+s.tl.map(t=>t[0]+' ('+min(t[1])+')').join(' ; ')+'.','Bilan : '+s.bilan];
   if(suiv)L.push('Prochaine séance : '+suiv.id.replace('S','séance ')+' — '+suiv.titre+'.');
@@ -25,6 +27,7 @@ function texteProno(s,suiv){
 function sectionSeance(s,i){
   const B=[],suiv=SEANCES[i+1],m=MOBILES[MOB_S[s.id]];
   B.push({t:'h',x:'Bilan et enjeux'});
+  if(s.pronote)B.push({t:'p',label:'Bilan :',x:s.pronote.bilan});
   B.push({t:'p',label:'Question de bilan avec les élèves :',x:s.bilan});
   if(s.enjeux)B.push({t:'p',label:'Enjeux :',x:s.enjeux});
   if(m){B.push({t:'p',label:'Sensation attendue ('+m.nom+') :',x:m.attendu});
@@ -70,5 +73,14 @@ function modele(){
     pied:'Cycle musculation · Terminale CA5 · Lycée Georges Pompidou',fichier:'cycle-musculation-terminale-CA5',
     sections:[bref].concat(SEANCES.map(sectionSeance))};
 }
-window.MuscuExport={modele,texteProno};
+/* résumé rapide pour le cahier de textes : bilan synthétique + texte à coller dans Pronote, séance par séance */
+function modeleResume(){
+  return {titre:'Cahier de textes · Cycle musculation',sousTitre:'Terminale · CA5 · '+SEANCES.length+' séances · Lycée Georges Pompidou',couleur:'#4D7C0F',pageGarde:false,sommaire:false,
+    garde:['Pour chaque séance : le bilan, puis le texte à coller dans Pronote (Contenu, À retenir / Préparation).'],
+    pied:'Cahier de textes · Cycle musculation · Terminale CA5',fichier:'cahier-de-textes-musculation-CA5',
+    sections:SEANCES.map((s,i)=>({id:s.id,titre:s.id+' — '+s.titre,suite:true,blocs:[
+      {t:'p',label:'Bilan :',x:s.pronote?s.pronote.bilan:s.obj},
+      {t:'cadre',titre:'À copier dans Pronote',lignes:texteProno(s,SEANCES[i+1])}]}))};
+}
+window.MuscuExport={modele,modeleResume,texteProno};
 })();

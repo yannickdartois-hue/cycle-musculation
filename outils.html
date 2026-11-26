@@ -76,6 +76,7 @@ table.rot{border-collapse:collapse;font-size:17px}table.rot td,table.rot th{bord
 .mob-choix img{display:block;width:100%;aspect-ratio:3/4;object-fit:cover}
 .mob-choix span{display:block;padding:6px 4px}
 .mob-choix button.ici{border-color:var(--mc);box-shadow:0 0 0 3px var(--mc)}
+.pronote{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--ligne-pale,#EEF5E3)}.pronote .bt2{min-height:44px}.exp-l .bt2{min-height:46px}
 </style>
 <script src="eps-commun.js" defer></script>
 <script>/* Ouvert depuis l'écran de cours (bouton Outils) : on ne garde que le contenu de l'outil. */
@@ -204,10 +205,11 @@ function totauxDefi(){
 /* S1 : documents de mise en place du circuit (PDF gardés hors ligne) */
 const PLAN_S1 = `<p class="noprint docs-s1"><b>Mise en place.</b> <a class="bt2 clair" href="s1-plan-16-ateliers.pdf" target="_blank" rel="noopener">📄 Plan du dojo (4 colonnes × 4 ateliers)</a> <a class="bt2 clair" href="s1-fiches-16-ateliers.pdf" target="_blank" rel="noopener">🖨️ Fiches des 16 ateliers (A4 recto-verso)</a></p>`;
 const T = {
- seances:["Les 9 séances", () => `<h2>Les 9 séances</h2><p class="noprint exp-l"><button class="bt2" type="button" data-export="pdf">📄 Exporter en PDF</button> <button class="bt2" type="button" data-export="docx">📝 Exporter en Word</button> <button class="bt2 clair" type="button" onclick="print()">Imprimer les séances</button></p><p class="noprint small muted">PDF et Word : page de garde, sommaire, une page par séance (bilan et enjeux, objectif, contenu détaillé, texte prêt pour Pronote, à préparer). Fonctionne sans réseau.</p>` + SEANCES.map(s => `<section class="card seance"><h3>${s.id} · ${esc(s.titre)}</h3><p class="obj">${esc(s.obj)}</p>
+ seances:["Les 9 séances", () => `<h2>Les 9 séances</h2><div class="card noprint"><p><b>📋 Résumé pour le cahier de textes (Pronote)</b> : bilan + texte à coller, les 9 séances à la suite.</p><p class="exp-l"><button class="bt2" type="button" data-export="pdf" data-modele="resume">📄 PDF</button> <button class="bt2" type="button" data-export="docx" data-modele="resume">📝 Word</button></p>
+   <p style="margin-top:12px"><b>Cycle détaillé</b> : page de garde, sommaire, une page par séance (bilan et enjeux, objectif, contenu détaillé, texte pour Pronote, à préparer).</p><p class="exp-l"><button class="bt2 clair" type="button" data-export="pdf">📄 PDF</button> <button class="bt2 clair" type="button" data-export="docx">📝 Word</button> <button class="bt2 clair" type="button" onclick="print()">Imprimer les séances</button></p><p class="small muted">Fonctionne sans réseau. Dans chaque séance ci-dessous : « Copier pour Pronote ».</p></div>` + SEANCES.map(s => `<section class="card seance"><h3>${s.id} · ${esc(s.titre)}</h3><p class="obj">${esc(s.obj)}</p>
    <div class="tl">${s.tl.map(t => `<span>${esc(t[0])} <b>${t[1]}′</b></span>`).join("")}</div><p class="small"><b>Installation.</b> ${esc(s.install)}</p>${s.id === "S1" ? PLAN_S1 : ""}
    ${s.fiches.map(f => `<div class="fiche"><h4><span class="cat">${esc(f.cat)}</span>${esc(f.titre)} · ${f.duree} min</h4><p class="small">${esc(f.dispo)}</p>${f.roles ? `<p class="small"><b>Rôles.</b> ${esc(f.roles)}</p>` : ""}<ol>${(f.deroul || []).map(d => `<li>${esc(d)}</li>`).join("")}</ol>${f.crit ? `<p class="small"><b>Critère.</b> ${esc(f.crit)}</p>` : ""}${f.reussite ? `<p class="small"><b>Réussi si</b> ${esc(f.reussite)}</p>` : ""}${f.moins || f.plus ? `<div class="var">${f.moins ? `<p><b>− Plus facile.</b> ${esc(f.moins)}</p>` : "<p></p>"}${f.plus ? `<p><b>+ Plus difficile.</b> ${esc(f.plus)}</p>` : "<p></p>"}</div>` : ""}</div>`).join("")}
-   <p class="small"><b>Bilan.</b> ${esc(s.bilan)}</p></section>`).join("")],
+   <p class="small"><b>Bilan.</b> ${esc(s.bilan)}</p>${s.pronote ? `<div class="pronote noprint"><p class="small"><b>Pour Pronote.</b> ${esc(s.pronote.contenu)}</p><p class="small">${esc(s.pronote.retenir)}</p><button class="bt2 clair" type="button" data-copier="${s.id}">📋 Copier pour Pronote</button></div>` : ""}</section>`).join("")],
  nuage:["Nuage de mots", () => {const [n, k] = nuageDuJour();return `<h2>Nuage de mots de la classe</h2>
    <p class="aide">S1 : début et fin d'échauffement. S2 : première et dernière série du test. Chaque binôme montre le QR « Mots et défi » de son téléphone en fin de séance ; tu peux aussi ajouter un mot à la main.</p>
    <p class="rang noprint"><button class="bt2" type="button" data-scan>📷 Scanner les téléphones</button><input id="mot" placeholder="Ajouter un mot" maxlength="30"><select id="mom"><option value="debut">Début (léger)</option><option value="fin">Fin (dur)</option></select><button class="bt2 clair" type="button" data-ajmot>Ajouter</button></p>
@@ -236,9 +238,16 @@ const T = {
 /* Chantier 14 : export PDF / Word du cycle (eps-export.js + export-muscu.js), hors connexion */
 async function exporter(b){
   const f = b.dataset.export, t = b.textContent;b.disabled = true;b.textContent = "⏳ Préparation…";
-  try{const M = MuscuExport.modele();if(f === "pdf")await EPSExport.pdf(M);else EPSExport.docx(M);b.textContent = "✓ Fichier enregistré"}
+  try{const M = b.dataset.modele === "resume" ? MuscuExport.modeleResume() : MuscuExport.modele();if(f === "pdf")await EPSExport.pdf(M);else EPSExport.docx(M);b.textContent = "✓ Fichier enregistré"}
   catch(err){alert("Export impossible : " + err.message);b.textContent = t}
   setTimeout(() => {b.disabled = false;b.textContent = t}, 2500);
+}
+/* « Copier pour Pronote » : Contenu + À retenir / Préparation, dans le presse-papiers */
+async function copierPronote(b){
+  const s = seanceById(b.dataset.copier), t = s.pronote.contenu + "\n" + s.pronote.retenir, avant = b.textContent;
+  try{await navigator.clipboard.writeText(t)}
+  catch(e){const z = document.createElement("textarea");z.value = t;z.setAttribute("readonly", "");z.style.position = "fixed";z.style.opacity = "0";document.body.appendChild(z);z.select();try{document.execCommand("copy")}catch(x){}z.remove()}
+  b.textContent = "✓ Copié : colle-le dans Pronote";setTimeout(() => b.textContent = avant, 2500);
 }
 let courant = "seances";
 function aller(id){
@@ -263,6 +272,7 @@ document.addEventListener("change", e => {if(e.target.id === "sup")calc()});
 document.addEventListener("click", e => {
   const b = e.target.closest("[data-t]");if(b){aller(b.dataset.t);scrollTo(0, 0);return}
   const x = e.target.closest("[data-export]");if(x){exporter(x);return}
+  const cp = e.target.closest("[data-copier]");if(cp){copierPronote(cp);return}
   if(e.target.closest("[data-scan]")){scanner(o => o.t === "defi" ? recevoirDefi(o) : recevoirMots(o));return}
   if(e.target.closest("[data-ajmot]")){const m = $("#mot").value.trim();if(!m)return;const [n, k] = nuageDuJour();n[k][$("#mom").value].push(m);ecrireL(KN, n);aller("nuage");return}
   if(e.target.closest("[data-videN]")){if(!confirm("Vider le nuage de mots d'aujourd'hui ?"))return;const n = lireL(KN, {});delete n[jourISO()];ecrireL(KN, n);aller("nuage");return}

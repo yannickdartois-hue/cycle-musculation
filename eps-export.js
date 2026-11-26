@@ -46,7 +46,7 @@ async function pdf(M){
     if(ligne.length)lignes.push(ligne);
     lignes.forEach(l=>{place(L);let x=x0;l.forEach(o=>{police(o.b?'bold':'normal',taille,coul);d.text(o.m,x,y+L*0.75);x+=d.getTextWidth(o.m)});y+=L});
   }
-  function titreSec(t){place(16);police('bold',18,AC);d.splitTextToSize(t,LARG).forEach(l=>{d.text(l,G,y+7);y+=8.6});d.setDrawColor(...AC);d.setLineWidth(.8);d.line(G,y+1,G+LARG,y+1);y+=6}
+  function titreSec(t,petit){place(16);police('bold',petit?14:18,AC);d.splitTextToSize(t,LARG).forEach(l=>{d.text(l,G,y+7);y+=8.6});d.setDrawColor(...AC);d.setLineWidth(.8);d.line(G,y+1,G+LARG,y+1);y+=6}
   function bloc(b){
     if(b.t==='h'){place(14);y+=3;police('bold',12.5,AC);d.splitTextToSize(b.x,LARG).forEach(l=>{place(6);d.text(l,G,y+4.6);y+=6});y+=1;return}
     if(b.t==='p'){riche((b.label?[{x:b.label+' ',b:true}]:[]).concat([{x:b.x}]),10.5);y+=2;return}
@@ -58,29 +58,31 @@ async function pdf(M){
         let x=G;sp.forEach((s,i)=>{police(gras?'bold':'normal',10,gras?AC:ENCRE);s.forEach((l,j)=>d.text(l,x+pad,y+pad+L*(j+.75)));x+=cw[i]});y+=h};
       row(b.entetes,true,[238,245,227]);b.lignes.forEach(r=>row(r,false));y+=4;return}
     if(b.t==='cadre'){const pad=4,L=lh(10.5);police('normal',10.5);const sp=[];b.lignes.forEach(l=>{d.splitTextToSize(insec(l),LARG-2*pad).forEach(q=>sp.push(q.replace(/\u00a0/g,' ')));sp.push('')});sp.pop();
-      let i=0;place(L*3+12);let prem=true;
+      let i=0;const ht=sp.length*L+2*pad+7;place(ht<=H-BAS-HAUT?ht:L*3+12);let prem=true;   /* un encadré court n'est jamais coupé entre deux pages */
       while(i<sp.length){const dispo=Math.max(1,Math.floor((H-BAS-y-2*pad-(prem?7:0))/L));const part=sp.slice(i,i+dispo);const h=part.length*L+2*pad+(prem?7:0);
         d.setFillColor(248,250,245);d.setDrawColor(...AC);d.setLineWidth(.5);d.roundedRect(G,y,LARG,h,2,2,'FD');let yy=y+pad;
         if(prem){police('bold',10.5,AC);d.text(b.titre,G+pad,yy+4);yy+=7}
         police('normal',10.5);part.forEach(l=>{d.text(l,G+pad,yy+L*.75);yy+=L});y+=h+4;i+=part.length;prem=false;if(i<sp.length){d.addPage();y=HAUT}}
       return}
   }
-  /* page de garde */
-  d.setFillColor(...AC);d.rect(0,0,W,92,'F');
+  /* page de garde (M.pageGarde===false : simple bandeau de titre en haut de la 1re page) */
+  if(M.pageGarde===false){d.setFillColor(...AC);d.rect(0,0,W,34,'F');police('bold',20,[255,255,255]);d.text(M.titre,G,17);police('normal',11.5,[255,255,255]);if(M.sousTitre)d.text(M.sousTitre,G,26);y=44;
+    (M.garde||[]).forEach(l=>{riche([{x:l}],10.5,G,LARG,GRIS);y+=1})}
+  else{d.setFillColor(...AC);d.rect(0,0,W,92,'F');
   police('bold',30,[255,255,255]);d.splitTextToSize(M.titre,W-40).forEach((l,i)=>d.text(l,G,52+i*12));
   police('normal',14,[255,255,255]);if(M.sousTitre)d.text(M.sousTitre,G,80);
   y=112;(M.garde||[]).forEach(l=>{riche([{x:l}],12,G,LARG,ENCRE);y+=2});
-  police('normal',10,GRIS);d.text('Document exporté le '+dateFr()+' depuis MON EPS'+(M.version?' ('+M.version+')':'')+'.',G,H-30);
+  police('normal',10,GRIS);d.text('Document exporté le '+dateFr()+' depuis MON EPS'+(M.version?' ('+M.version+')':'')+'.',G,H-30)}
   /* sommaire : réservé en page 2, rempli à la fin */
-  const avecSommaire=M.sections.filter(s=>s.sommaire!==false).length>=4;
+  const avecSommaire=M.sommaire!==false&&M.sections.filter(s=>s.sommaire!==false).length>=4;
   if(avecSommaire){d.addPage()}
-  M.sections.forEach(s=>{d.addPage();y=HAUT;pagesSec[s.id]=d.getNumberOfPages();titreSec(s.titre);s.blocs.forEach(bloc)});
+  M.sections.forEach((s,i)=>{if(s.suite&&(i>0||M.pageGarde===false)){y+=i?5:0;place(95)}else{d.addPage();y=HAUT}pagesSec[s.id]=d.getNumberOfPages();titreSec(s.titre,s.suite);s.blocs.forEach(bloc)});
   if(avecSommaire){d.setPage(2);y=HAUT;titreSec('Sommaire');
     M.sections.filter(s=>s.sommaire!==false).forEach(s=>{police('normal',11.5);const p=String(pagesSec[s.id]);const t=d.splitTextToSize(s.titre,LARG-18)[0];
       d.text(t,G,y+5);d.text(p,G+LARG,y+5,{align:'right'});d.setDrawColor(200,205,200);d.setLineDashPattern([.5,1],0);d.line(G+d.getTextWidth(t)+2,y+5,G+LARG-d.getTextWidth(p)-2,y+5);d.setLineDashPattern([],0);
       d.link(G,y,LARG,7,{pageNumber:pagesSec[s.id]});y+=8})}
   /* pieds de page */
-  const N=d.getNumberOfPages();for(let i=2;i<=N;i++){d.setPage(i);police('normal',8.5,GRIS);d.text(M.pied||M.titre,G,H-10);d.text(i+' / '+N,W-D,H-10,{align:'right'})}
+  const N=d.getNumberOfPages();for(let i=M.pageGarde===false?1:2;i<=N;i++){d.setPage(i);police('normal',8.5,GRIS);d.text(M.pied||M.titre,G,H-10);d.text(i+' / '+N,W-D,H-10,{align:'right'})}
   telecharger((M.fichier||'cycle')+'.pdf',d.output('blob'));
   return N;
 }
@@ -92,15 +94,16 @@ const para=(contenu,o)=>{o=o||{};return `<w:p><w:pPr>${o.style?`<w:pStyle w:val=
 function docxXML(M){
   const ac=String(M.couleur||'#4D7C0F').replace('#','').toUpperCase();let numId=2,nums=[];   /* 1 = puces ; 2+ = une numérotation par liste (repart à 1) */
   let corps='';let bm=0;const signets={};
-  corps+=para(run(M.titre,{b:true,sz:56,coul:ac}),{style:'Title'})+(M.sousTitre?para(run(M.sousTitre,{sz:30}),{esp:120}):'');
+  if(M.pageGarde===false){corps+=para(run(M.titre,{b:true,sz:40,coul:ac}),{esp:0})+(M.sousTitre?para(run(M.sousTitre,{sz:24})):'');(M.garde||[]).forEach(l=>{corps+=para(run(l,{sz:20,coul:'5A6475'}))})}
+  else{corps+=para(run(M.titre,{b:true,sz:56,coul:ac}),{style:'Title'})+(M.sousTitre?para(run(M.sousTitre,{sz:30}),{esp:120}):'');
   (M.garde||[]).forEach(l=>{corps+=para(run(l,{sz:24}))});
-  corps+=para(run('Document exporté le '+dateFr()+' depuis MON EPS'+(M.version?' ('+M.version+')':'')+'.',{sz:18,coul:'5A6475'}),{esp:480});
+  corps+=para(run('Document exporté le '+dateFr()+' depuis MON EPS'+(M.version?' ('+M.version+')':'')+'.',{sz:18,coul:'5A6475'}),{esp:480})}
   const S=M.sections.filter(s=>s.sommaire!==false);
   M.sections.forEach((s,i)=>signets[s.id]='sec_'+(i+1));
-  if(S.length>=4){corps+=para(run('Sommaire'),{style:'Heading1',saut:true});
+  if(M.sommaire!==false&&S.length>=4){corps+=para(run('Sommaire'),{style:'Heading1',saut:true});
     S.forEach(s=>{corps+=`<w:p><w:pPr><w:spacing w:after="80"/></w:pPr><w:hyperlink w:anchor="${signets[s.id]}" w:history="1">${run(s.titre,{coul:ac,sz:24})}</w:hyperlink></w:p>`})}
   M.sections.forEach(s=>{const id=++bm;
-    corps+=`<w:p><w:pPr><w:pStyle w:val="Heading1"/><w:pageBreakBefore/></w:pPr><w:bookmarkStart w:id="${id}" w:name="${signets[s.id]}"/>${run(s.titre)}<w:bookmarkEnd w:id="${id}"/></w:p>`;
+    corps+=`<w:p><w:pPr><w:pStyle w:val="${s.suite?'Heading2':'Heading1'}"/>${s.suite?'<w:spacing w:before="360"/>':'<w:pageBreakBefore/>'}</w:pPr><w:bookmarkStart w:id="${id}" w:name="${signets[s.id]}"/>${run(s.titre)}<w:bookmarkEnd w:id="${id}"/></w:p>`;
     s.blocs.forEach(b=>{
       if(b.t==='h')corps+=para(run(b.x),{style:'Heading2'});
       else if(b.t==='p')corps+=para((b.label?run(b.label+' ',{b:true}):'')+run(b.x));
@@ -116,7 +119,7 @@ function docxXML(M){
         corps+=ps.join('')+para('',{esp:60})}
     })});
   const document=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${corps}<w:sectPr><w:footerReference w:type="default" r:id="rId3"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/><w:titlePg/></w:sectPr></w:body></w:document>`;
+<w:document xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><w:body>${corps}<w:sectPr><w:footerReference w:type="default" r:id="rId3"/><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1134" w:bottom="1134" w:left="1134" w:header="567" w:footer="567" w:gutter="0"/>${M.pageGarde===false?'':'<w:titlePg/>'}</w:sectPr></w:body></w:document>`;
   const styles=`<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <w:styles xmlns:w="http://schemas.openxmlformats.org/wordprocessingml/2006/main">
 <w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Arial" w:hAnsi="Arial" w:eastAsia="Arial" w:cs="Arial"/><w:sz w:val="21"/><w:szCs w:val="21"/><w:lang w:val="fr-FR"/></w:rPr></w:rPrDefault><w:pPrDefault><w:pPr><w:spacing w:after="100" w:line="276" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>
